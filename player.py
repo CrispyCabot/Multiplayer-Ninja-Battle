@@ -1,6 +1,6 @@
 import pygame
 from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, \
-                            MOUSEBUTTONUP, QUIT
+                            MOUSEBUTTONUP, QUIT, K_r
 import os
 from config import PATH, SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 def loadSprite2(folder, amt, char): #Left images, flips them
@@ -75,7 +75,10 @@ playerSpeed = 10
 class Player:
     def __init__(self, x, y):
         self.x = x
+        self.alive = True
         self.y = y
+        self.health = 100
+        self.damagedEnemy = False
         self.lastY = y
         self.height = height
         self.width = width
@@ -87,6 +90,7 @@ class Player:
         self.jump = False
         self.action = 'idle'
         self.lastAction = 'idle' #used to detect a change in action
+        self.reset = False
     def draw(self, win):
         if self.action == self.lastAction:
             self.frameCounter += .1
@@ -95,67 +99,89 @@ class Player:
             self.lastAction = self.action
         if self.frameCounter >= len(charr[self.action]):
             self.frameCounter = 0
+
         if self.dir == 'right':
             img = charr[self.action][int(self.frameCounter)]
         elif self.dir == 'left':
             img = charl[self.action][int(self.frameCounter)]
         pos = img.get_rect()
         pos.center = self.x, self.y #Center anchor
+        pygame.draw.rect(win, (0,255,0), pygame.Rect(self.x-50,self.y-50,self.health, 10))
+        if self.health < 100:
+            pygame.draw.rect(win, (255,0,0), pygame.Rect(self.x-50+self.health,self.y-50,100-self.health,10))
         win.blit(img, pos)
 
-    def move(self, platforms):
+    def move(self, platforms, enemy):
         keys = pygame.key.get_pressed()
+        if enemy.damagedEnemy:
+            if self.alive:
+                self.health -= 5
+                if self.health <= 0:
+                    self.alive = False
+        self.lastY = self.y
+        self.damagedEnemy = False
         if keys[K_ESCAPE]:
-            pass #Quit somehow
+            pygame.quit() #Causes an error but good enough
+        if keys[K_r]:
+            self.reset = True
         self.action = 'idle'
-        if self.jump:
-            self.y -= self.jumpVel
-            self.jumpVel -= 2
-            if self.jumpVel < 0 and not keys[K_DOWN]:
+        if self.alive:
+            if self.jump:
+                self.y -= self.jumpVel
+                self.jumpVel -= 2
+                if self.jumpVel < 0 and not keys[K_DOWN]:
+                    for i in platforms:
+                        check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
+                        if check:
+                            print('hit')
+                            self.jump = False
+                            self.y = val-self.height/2
+                            self.jumpVel = self.jumpMax
+                            break
+            if keys[K_UP] and not self.jump:
+                self.jump = True
+                self.y -= self.jumpVel
+                self.action = 'run' #the jump action is bad so yeah
+                if self.jumpVel <  -self.jumpMax:
+                    self.jumpVel = self.jumpMax
+                    self.jump = False
+            if keys[K_RIGHT] and not keys[K_LEFT]:
+                self.x += playerSpeed
+                if self.x > SCREEN_WIDTH:
+                    self.x = SCREEN_WIDTH
+                self.action = 'run'
+                self.dir = 'right'
                 for i in platforms:
                     check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
-                    if check:
-                        self.jump = False
-                        self.y = val-self.height/2
-                        self.jumpVel = self.jumpMax
-        if keys[K_UP] and not self.jump:
-            self.jump = True
-            self.y -= self.jumpVel
-            self.action = 'run' #the jump action is bad so yeah
-            if self.jumpVel <  -self.jumpMax:
-                self.jumpVel = self.jumpMax
-                self.jump = False
-        if keys[K_RIGHT] and not keys[K_LEFT]:
-            self.x += playerSpeed
-            if self.x > SCREEN_WIDTH:
-                self.x = SCREEN_WIDTH
-            self.action = 'run'
-            self.dir = 'right'
-            for i in platforms:
-                check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
-                if not(check) and not(self.jump):
-                    self.jump = True
-                    self.jumpVel = 0
-        if keys[K_LEFT] and not keys[K_RIGHT]:
-            self.x -= playerSpeed
-            if self.x < 0:
-                self.x = 0
-            self.action = 'run'
-            self.dir = 'left'
-            for i in platforms:
-                check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
-                if not(check) and not(self.jump):
-                    self.jump = True
-                    self.jumpVel = 0
-        if keys[K_SPACE]:
-            self.action = 'slash'
-        if keys[K_DOWN] and not self.jump and self.y < 600:
-            self.jump = True
-            self.jumpVel = 0
-            self.y += 50
-            self.lastY = self.y
-        self.frameCounter += .3
-        if self.frameCounter >= 54:
-            self.frameCounter = 0
-        if self.y > 666: #For some reason down key let them go through floor so idk this fixed it
-                self.y = 666
+                    if not(check) and not(self.jump):
+                        self.jump = True
+                        self.jumpVel = 0
+            if keys[K_LEFT] and not keys[K_RIGHT]:
+                self.x -= playerSpeed
+                if self.x < 0:
+                    self.x = 0
+                self.action = 'run'
+                self.dir = 'left'
+                for i in platforms:
+                    check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
+                    if not(check) and not(self.jump):
+                        self.jump = True
+                        self.jumpVel = 0
+            if keys[K_SPACE]:
+                self.action = 'slash'
+                #if p2 is in front
+                if enemy.x - self.x < 50 and self.dir == 'right' and abs(enemy.y -self.y) < 50:
+                    self.damagedEnemy = True
+                if self.x - enemy.x < 50 and self.dir == 'left' and abs(enemy.y -self.y) < 50:
+                    self.damagedEnemy = True
+                
+            if keys[K_DOWN] and not self.jump and self.y < 600:
+                self.jump = True
+                self.jumpVel = 0
+                self.y += 50
+                self.lastY = self.y
+            self.frameCounter += .3
+            if self.frameCounter >= 54:
+                self.frameCounter = 0
+            if self.y > 666: #For some reason down key let them go through floor so idk this fixed it
+                    self.y = 666

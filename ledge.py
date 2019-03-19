@@ -12,7 +12,7 @@ class Platform:
         self.h = h
         self.type = typee
         self.img = pygame.transform.scale(grass, (self.w, self.h))
-    def update(self, win):
+    def draw(self, win):
         if self.type == 'floor':
             pass
         if self.type == 'plat':
