@@ -5,7 +5,7 @@ from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH
 from ledge import Platform
 import os
 
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("NINJA BATTLE")
 
 pygame.init()
