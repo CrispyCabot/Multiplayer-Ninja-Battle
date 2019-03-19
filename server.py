@@ -2,6 +2,7 @@
 import socket
 from _thread import *
 import sys
+import time
 import pickle
 from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH
@@ -19,9 +20,11 @@ except socket.error as e:
 s.listen(2)
 print("Waiting for a connection, Server Started")
 
+global players
 players = [Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100), Player(SCREEN_WIDTH/2+100, SCREEN_HEIGHT-100)]
 
 def threaded_client(conn, player):
+    global players
     conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
@@ -38,8 +41,15 @@ def threaded_client(conn, player):
                 else:
                     reply = players[1]
 
-                print("Received: ", data)
-                print("Sending : ", reply)
+                if reply.reset:
+                    if player == 1:
+                        players[0] = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
+                    else:
+                        players[1] = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
+                    reply = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
+            
+                print(player, "Received: ", data)
+                print(player, "Sending : ", reply)
 
             conn.sendall(pickle.dumps(reply))
         except:
