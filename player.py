@@ -191,9 +191,9 @@ class Player:
             if keys[K_SPACE] and not self.chatActive:
                 self.action = 'slash'
                 #if p2 is in front
-                if enemy.x - self.x < 50 and self.dir == 'right' and abs(enemy.y -self.y) < 50:
+                if 0 <  enemy.x - self.x < 50 and abs(enemy.y-self.y) < 20 and self.dir == 'right':
                     self.damagedEnemy = True
-                if self.x - enemy.x < 50 and self.dir == 'left' and abs(enemy.y -self.y) < 50:
+                if 0 <  self.x - enemy.x < 50 and abs(enemy.y-self.y) < 20 and self.dir == 'left':
                     self.damagedEnemy = True
                 
             if keys[K_DOWN] and not self.jump and self.y < 600:

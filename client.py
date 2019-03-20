@@ -60,7 +60,7 @@ def redrawWindow(win,player, player2, plats):
         if val[1] == 0:
             text = chatFont.render(val[0][0], True, (255,255,255))
         else:
-            text = chatFont.render(val[0][0], True, (255,0,0))
+            text = chatFont.render(val[0][0], True, (0,255,0))
         pos = text.get_rect()
         pos.topleft = (10, yloc)
         win.blit(text, pos)
