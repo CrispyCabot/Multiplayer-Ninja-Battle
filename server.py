@@ -21,7 +21,7 @@ s.listen(2)
 print("Waiting for a connection, Server Started")
 
 global players
-players = [Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100), Player(SCREEN_WIDTH/2+100, SCREEN_HEIGHT-100)]
+players = [Player(0), Player(1)]
 
 def threaded_client(conn, player):
     global players
@@ -40,13 +40,6 @@ def threaded_client(conn, player):
                     reply = players[0]
                 else:
                     reply = players[1]
-
-                if reply.reset:
-                    if player == 1:
-                        players[0] = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
-                    else:
-                        players[1] = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
-                    reply = Player(SCREEN_WIDTH/2-100, SCREEN_HEIGHT-100)
             
                 print(player, "Received: ", data)
                 print(player, "Sending : ", reply)

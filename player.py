@@ -1,6 +1,7 @@
 import pygame
+import time
 from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, \
-                            MOUSEBUTTONUP, QUIT, K_r
+                            MOUSEBUTTONUP, QUIT, K_r, K_t, K_RETURN
 import os
 from config import PATH, SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 def loadSprite2(folder, amt, char): #Left images, flips them
@@ -73,13 +74,17 @@ width, height = charr['run'][0].get_rect().size
 playerSpeed = 10
 
 class Player:
-    def __init__(self, x, y):
-        self.x = x
+    def __init__(self, num):
+        if num == 0:
+            self.x = SCREEN_WIDTH/2-200
+        else:
+            self.x = SCREEN_WIDTH/2+200
+        self.y = SCREEN_HEIGHT-100
         self.alive = True
-        self.y = y
+        self.id = num
         self.health = 100
         self.damagedEnemy = False
-        self.lastY = y
+        self.lastY = self.y
         self.height = height
         self.width = width
         self.health = 100
@@ -91,6 +96,13 @@ class Player:
         self.action = 'idle'
         self.lastAction = 'idle' #used to detect a change in action
         self.reset = False
+
+        self.chatActive = False
+        self.msg = ''
+        self.pastMsgs = []
+    def resetVals(self):
+        self.__init__(self.id)
+        time.sleep(.2) #So it doesn't immediately register another press of r
     def draw(self, win):
         if self.action == self.lastAction:
             self.frameCounter += .1
@@ -113,6 +125,8 @@ class Player:
 
     def move(self, platforms, enemy):
         keys = pygame.key.get_pressed()
+        if enemy.reset and self.reset:
+            self.resetVals()
         if enemy.damagedEnemy:
             if self.alive:
                 self.health -= 5
@@ -122,9 +136,16 @@ class Player:
         self.damagedEnemy = False
         if keys[K_ESCAPE]:
             pygame.quit() #Causes an error but good enough
-        if keys[K_r]:
+        if keys[K_r] and not self.chatActive:
             self.reset = True
         self.action = 'idle'
+        if keys[K_RETURN] and self.chatActive and len(self.msg) > 1:
+            self.pastMsgs.append([self.msg, time.time()])
+            self.chatActive = False
+            self.msg = ''
+        if keys[K_t] and not self.chatActive:
+            self.chatActive = True
+            
         if self.alive:
             if self.jump:
                 self.y -= self.jumpVel
@@ -167,7 +188,7 @@ class Player:
                     if not(check) and not(self.jump):
                         self.jump = True
                         self.jumpVel = 0
-            if keys[K_SPACE]:
+            if keys[K_SPACE] and not self.chatActive:
                 self.action = 'slash'
                 #if p2 is in front
                 if enemy.x - self.x < 50 and self.dir == 'right' and abs(enemy.y -self.y) < 50:

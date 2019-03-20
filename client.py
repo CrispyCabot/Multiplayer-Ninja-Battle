@@ -11,6 +11,8 @@ pygame.display.set_caption("NINJA BATTLE")
 pygame.init()
 
 font = pygame.font.SysFont('', 68)
+smallFont = pygame.font.SysFont('', 24)
+chatFont = pygame.font.SysFont('', 18)
 
 bg = [1]
 for i in range(0, 54):
@@ -31,6 +33,59 @@ def redrawWindow(win,player, player2, plats):
             pos = text.get_rect()
             pos.center = (SCREEN_WIDTH/2, SCREEN_HEIGHT/2)
             win.blit(text, pos)
+    if player.reset:
+        text = smallFont.render('Waiting for other player to reset', True, (255,0,0))
+        pos = text.get_rect()
+        pos.topright = (SCREEN_WIDTH-10,10)
+        win.blit(text, pos)
+    elif player2.reset:
+        text = smallFont.render('Other player waiting to reset. Press \'R\'', True, (255,0,0))
+        pos = text.get_rect()
+        pos.topright = (SCREEN_WIDTH-10,10)
+        win.blit(text, pos)
+    #chat background
+    back = pygame.Surface((300,200))
+    back.set_alpha(100)
+    back.fill((100,100,100))
+    win.blit(back, (8,8))
+    yloc = 190
+    msgs = []
+    for i in player.pastMsgs:
+        msgs.append([i, 0])
+    for i in player2.pastMsgs:
+        msgs.append([i, 1])
+    msgs.sort(key = lambda x: x[0][1]) #I don't know how this works
+    for i in range(len(msgs)-1, -1, -1):
+        val = msgs[i]
+        if val[1] == 0:
+            text = chatFont.render(val[0][0], True, (255,255,255))
+        else:
+            text = chatFont.render(val[0][0], True, (255,0,0))
+        pos = text.get_rect()
+        pos.topleft = (10, yloc)
+        win.blit(text, pos)
+        yloc -= 20
+
+    '''
+    for i in player.pastMsgs:
+        text = chatFont.render(i[0], True, (255,255,255))
+        pos = text.get_rect()
+        pos.topleft = (10,yloc)
+        yloc += 20
+        win.blit(text, pos)
+    for i in player2.pastMsgs:
+        text = chatFont.render(i[0], True, (255,100,100))
+        pos = text.get_rect()
+        pos.topleft = (10,yloc)
+        yloc += 20
+        win.blit(text, pos)
+    '''
+    if player.chatActive:
+        text = chatFont.render(player.msg, True, (0,0,0))
+        pygame.draw.rect(win, (255,255,255), pygame.Rect(8,206, 300, 20))
+        pos = text.get_rect()
+        pos.topleft = (10, 208)
+        win.blit(text, pos)
     if not player2.alive:
             text = font.render("You Win", True, (0,255,0))
             pos = text.get_rect()
@@ -58,6 +113,13 @@ def main():
             if event.type == pygame.QUIT:
                 run = False
                 pygame.quit()
+            if p.chatActive:
+                if event.type == pygame.KEYDOWN:
+                    if event.key != 13:
+                        if event.key == 8: #backspace
+                            p.msg = p.msg[0:-1]
+                        else:
+                            p.msg = p.msg + chr(event.key)
 
         p.move(platforms, p2)
         redrawWindow(win, p, p2, platforms)
