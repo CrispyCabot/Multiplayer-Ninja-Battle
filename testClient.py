@@ -1,5 +1,5 @@
 import pygame
-from network import Network
+#from network import Network
 from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH
 from ledge import Platform
@@ -81,8 +81,10 @@ def redrawWindow(win,player, player2, plats):
 
 def main():
     run = True
-    n = Network()
-    p = n.getP()
+  #  n = Network()
+  #  p = n.getP()
+    p = Player(0)
+    p2 = Player(1)
     clock = pygame.time.Clock()
 
     platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'), 
@@ -92,7 +94,7 @@ def main():
 
     while run:
         clock.tick(60)
-        p2 = n.send(p)
+      #  p2 = n.send(p)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
