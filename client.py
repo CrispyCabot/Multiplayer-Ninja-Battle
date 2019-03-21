@@ -4,6 +4,7 @@ from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH
 from ledge import Platform
 import os
+import time
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("NINJA BATTLE")
