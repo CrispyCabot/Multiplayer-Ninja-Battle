@@ -168,6 +168,11 @@ class Player:
         if enemy.damagedEnemy:
             if self.alive:
                 self.health -= 5
+                if enemy.dir == 'right':
+                    self.x += 5
+                else:
+                    self.x -= 5
+                self.y -= 5
                 if self.health <= 0:
                     self.alive = False
         self.lastY = self.y
@@ -237,9 +242,9 @@ class Player:
             if keys[K_SPACE] and not self.chatActive:
                 self.action = 'slash'
                 #if p2 is in front
-                if 0 <  enemy.x - self.x < 50 and abs(enemy.y-self.y) < 20 and self.dir == 'right':
+                if 0 <  enemy.x - self.x < 50 and abs(enemy.y-self.y) < 50 and self.dir == 'right':
                     self.damagedEnemy = True
-                if 0 <  self.x - enemy.x < 50 and abs(enemy.y-self.y) < 20 and self.dir == 'left':
+                if 0 <  self.x - enemy.x < 50 and abs(enemy.y-self.y) < 50 and self.dir == 'left':
                     self.damagedEnemy = True
                 
             if keys[K_DOWN] and not self.jump and self.y < 600:
@@ -250,5 +255,6 @@ class Player:
             self.frameCounter += .3
             if self.frameCounter >= 54:
                 self.frameCounter = 0
-            if self.y > 666: #For some reason down key let them go through floor so idk this fixed it
-                    self.y = 666
+            if self.y > 1000: #For some reason down key let them go through floor so idk this fixed it
+                    self.alive = False
+                    self. y = 1000
