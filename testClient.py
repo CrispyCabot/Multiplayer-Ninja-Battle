@@ -1,9 +1,10 @@
 import pygame
-#from network import Network
+from network import Network
 from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH
-from ledge import Platform
+from ledge import Platform, Wall
 import os
+import time
 
 win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("NINJA BATTLE")
@@ -19,12 +20,14 @@ for i in range(0, 54):
     bg.append(pygame.transform.scale(pygame.image.load(PATH+os.path.join('data', 'bg', 'tile'+str(i)+'.png')), (SCREEN_WIDTH, SCREEN_HEIGHT)))
 
 
-def redrawWindow(win,player, player2, plats):
+def redrawWindow(win,player, player2, plats, walls):
     win.blit(bg[bg[0]], (0,0))
     bg[0] += 1
     if bg[0] > 54:
         bg[0] = 1
     for i in plats:
+        i.draw(win)
+    for i in walls:
         i.draw(win)
     player.draw(win)
     player2.draw(win)
@@ -60,7 +63,7 @@ def redrawWindow(win,player, player2, plats):
         if val[1] == 0:
             text = chatFont.render(val[0][0], True, (255,255,255))
         else:
-            text = chatFont.render(val[0][0], True, (255,0,0))
+            text = chatFont.render(val[0][0], True, (0,255,0))
         pos = text.get_rect()
         pos.topleft = (10, yloc)
         win.blit(text, pos)
@@ -81,8 +84,8 @@ def redrawWindow(win,player, player2, plats):
 
 def main():
     run = True
-  #  n = Network()
-  #  p = n.getP()
+   # n = Network()
+   # p = n.getP()
     p = Player(0)
     p2 = Player(1)
     clock = pygame.time.Clock()
@@ -92,9 +95,12 @@ def main():
                 Platform(600,SCREEN_HEIGHT-150,200,30, 'plat')
                 ]
 
+    walls = [Wall(50,SCREEN_HEIGHT-200,20,100, 'wall1'),
+            Wall(400,SCREEN_HEIGHT-600,20,200, 'wall2')]
+
     while run:
         clock.tick(60)
-      #  p2 = n.send(p)
+       # p2 = n.send(p)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -108,7 +114,7 @@ def main():
                         else:
                             p.msg = p.msg + chr(event.key)
 
-        p.move(platforms, p2)
-        redrawWindow(win, p, p2, platforms)
+        p.move(platforms, walls, p2)
+        redrawWindow(win, p, p2, platforms, walls)
 
 main()
