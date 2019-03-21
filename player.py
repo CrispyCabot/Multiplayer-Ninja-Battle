@@ -7,7 +7,7 @@ from config import PATH, SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
 def loadSprite2(folder, amt, char): #Left images, flips them
     for i in range(0, amt):
         img = pygame.transform.flip(pygame.image.load(PATH +
-                                os.path.join('data', 'char', 'red', folder, 'tile00' + str(i)+'.png')), True, False)
+                                os.path.join('data', 'char', 'blue', folder, 'tile00' + str(i)+'.png')), True, False)
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
@@ -15,7 +15,7 @@ def loadSprite2(folder, amt, char): #Left images, flips them
 def loadSprite(folder, amt, char): #Right images
     for i in range(0, amt):
         img = pygame.image.load(PATH +
-                                os.path.join('data', 'char', 'red', folder, 'tile00' + str(i)+'.png'))
+                                os.path.join('data', 'char', 'blue', folder, 'tile00' + str(i)+'.png'))
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
@@ -24,23 +24,23 @@ def loadR(char):
     loadSprite('death', 4, char)
     loadSprite('hurt', 5, char)
     loadSprite('idle', 4, char)
-    loadSprite('longJump', 8, char)
-    loadSprite('quickJump', 4, char)
+  #  loadSprite('longJump', 8, char)
+  #  loadSprite('quickJump', 4, char)
     loadSprite('run', 3, char)
     loadSprite('slash', 4, char)
-    loadSprite('sneak', 6, char)
-    loadSprite('throw', 5, char)
+  #  loadSprite('sneak', 6, char)
+  #  loadSprite('throw', 5, char)
 
 def loadL(char):
     loadSprite2('death', 4, char)
     loadSprite2('hurt', 5, char)
     loadSprite2('idle', 4, char)
-    loadSprite2('longJump', 8, char)
-    loadSprite2('quickJump', 4, char)
+   # loadSprite2('longJump', 8, char)
+   # loadSprite2('quickJump', 4, char)
     loadSprite2('run', 3, char)
     loadSprite2('slash', 4, char)
-    loadSprite2('sneak', 6, char)
-    loadSprite2('throw', 5, char)
+   # loadSprite2('sneak', 6, char)
+   # loadSprite2('throw', 5, char)
 
 charr = {
         'death': [],
