@@ -161,7 +161,7 @@ class Player:
             pygame.draw.rect(win, (255,0,0), pygame.Rect(self.x-50+self.health,self.y-50,100-self.health,10))
         win.blit(img, pos)
 
-    def move(self, platforms, enemy):
+    def move(self, platforms, walls, enemy):
         keys = pygame.key.get_pressed()
         if enemy.reset and self.reset:
             self.resetVals()
@@ -215,6 +215,10 @@ class Player:
                     if not(check) and not(self.jump):
                         self.jump = True
                         self.jumpVel = 0
+                for i in walls:
+                    if i.hit(self.x, self.y):
+                        self.x -= playerSpeed
+                        break
             if keys[K_LEFT] and not keys[K_RIGHT]:
                 self.x -= playerSpeed
                 if self.x < 0:
@@ -226,6 +230,10 @@ class Player:
                     if not(check) and not(self.jump):
                         self.jump = True
                         self.jumpVel = 0
+                for i in walls:
+                    if i.hit(self.x, self.y):
+                        self.x += playerSpeed
+                        break
             if keys[K_SPACE] and not self.chatActive:
                 self.action = 'slash'
                 #if p2 is in front
