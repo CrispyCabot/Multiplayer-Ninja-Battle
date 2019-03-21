@@ -7,7 +7,7 @@ import pickle
 from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH
 
-server = "10.93.35.120"
+server = "192.168.0.132"
 port = 5555
 
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
