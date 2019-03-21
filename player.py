@@ -4,45 +4,45 @@ from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, \
                             MOUSEBUTTONUP, QUIT, K_r, K_t, K_RETURN
 import os
 from config import PATH, SIZE, SCREEN_HEIGHT, SCREEN_WIDTH
-def loadSprite2(folder, amt, char): #Left images, flips them
+def loadSprite2(folder, amt, char, col): #Left images, flips them
     for i in range(0, amt):
         img = pygame.transform.flip(pygame.image.load(PATH +
-                                os.path.join('data', 'char', 'blue', folder, 'tile00' + str(i)+'.png')), True, False)
+                                os.path.join('data', 'char', col, folder, 'tile00' + str(i)+'.png')), True, False)
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
 
-def loadSprite(folder, amt, char): #Right images
+def loadSprite(folder, amt, char, col): #Right images
     for i in range(0, amt):
         img = pygame.image.load(PATH +
-                                os.path.join('data', 'char', 'blue', folder, 'tile00' + str(i)+'.png'))
+                                os.path.join('data', 'char', col, folder, 'tile00' + str(i)+'.png'))
         w, h = img.get_rect().size
         img = pygame.transform.scale(img, (int(SIZE * w), int(SIZE * h)))
         char[folder].append(img)
 
-def loadR(char):
-    loadSprite('death', 4, char)
-    loadSprite('hurt', 5, char)
-    loadSprite('idle', 4, char)
-  #  loadSprite('longJump', 8, char)
-  #  loadSprite('quickJump', 4, char)
-    loadSprite('run', 3, char)
-    loadSprite('slash', 4, char)
-  #  loadSprite('sneak', 6, char)
-  #  loadSprite('throw', 5, char)
+def loadR(char, col):
+    loadSprite('death', 4, char, col)
+    loadSprite('hurt', 5, char, col)
+    loadSprite('idle', 4, char, col)
+  #  loadSprite('longJump', 8, char, col)
+  #  loadSprite('quickJump', 4, char, col)
+    loadSprite('run', 3, char, col)
+    loadSprite('slash', 4, char, col)
+  #  loadSprite('sneak', 6, char, col)
+  #  loadSprite('throw', 5, char, col)
 
-def loadL(char):
-    loadSprite2('death', 4, char)
-    loadSprite2('hurt', 5, char)
-    loadSprite2('idle', 4, char)
-   # loadSprite2('longJump', 8, char)
-   # loadSprite2('quickJump', 4, char)
-    loadSprite2('run', 3, char)
-    loadSprite2('slash', 4, char)
-   # loadSprite2('sneak', 6, char)
-   # loadSprite2('throw', 5, char)
+def loadL(char, col):
+    loadSprite2('death', 4, char, col)
+    loadSprite2('hurt', 5, char, col)
+    loadSprite2('idle', 4, char, col)
+   # loadSprite2('longJump', 8, char, col)
+   # loadSprite2('quickJump', 4, char, col)
+    loadSprite2('run', 3, char, col)
+    loadSprite2('slash', 4, char, col)
+   # loadSprite2('sneak', 6, char, col)
+   # loadSprite2('throw', 5, char, col)
 
-charr = {
+rcharr = {
         'death': [],
         'hurt': [],
         'idle': [],
@@ -54,7 +54,7 @@ charr = {
         'throw': []
     }
 
-charl = {
+rcharl = {
         'death': [],
         'hurt': [],
         'idle': [],
@@ -66,10 +66,46 @@ charl = {
         'throw': []
     }
 
-loadR(charr)
-loadL(charl)
+bcharr = {
+        'death': [],
+        'hurt': [],
+        'idle': [],
+        'longJump': [],
+        'quickJump': [],
+        'run': [],
+        'slash': [],
+        'sneak': [],
+        'throw': []
+    }
 
-width, height = charr['run'][0].get_rect().size
+bcharl = {
+        'death': [],
+        'hurt': [],
+        'idle': [],
+        'longJump': [],
+        'quickJump': [],
+        'run': [],
+        'slash': [],
+        'sneak': [],
+        'throw': []
+    }
+
+loadR(rcharr, 'red')
+loadL(rcharl, 'red')
+
+loadR(bcharr, 'blue')
+loadL(bcharl, 'blue')
+
+rcolors = {
+            'red': rcharr,
+            'blue': bcharr
+}
+lcolors = {
+            'red': rcharl,
+            'blue': bcharl
+}
+
+width, height = rcharr['run'][0].get_rect().size
 
 playerSpeed = 10
 
@@ -77,8 +113,10 @@ class Player:
     def __init__(self, num):
         if num == 0:
             self.x = SCREEN_WIDTH/2-200
+            self.col = 'red'
         else:
             self.x = SCREEN_WIDTH/2+200
+            self.col = 'blue'
         self.y = SCREEN_HEIGHT-100
         self.alive = True
         self.id = num
@@ -109,13 +147,13 @@ class Player:
         else:
             self.frameCounter = 0
             self.lastAction = self.action
-        if self.frameCounter >= len(charr[self.action]):
+        if self.frameCounter >= len(rcharr[self.action]):
             self.frameCounter = 0
 
         if self.dir == 'right':
-            img = charr[self.action][int(self.frameCounter)]
+            img = rcolors[self.col][self.action][int(self.frameCounter)]
         elif self.dir == 'left':
-            img = charl[self.action][int(self.frameCounter)]
+            img = lcolors[self.col][self.action][int(self.frameCounter)]
         pos = img.get_rect()
         pos.center = self.x, self.y #Center anchor
         pygame.draw.rect(win, (0,255,0), pygame.Rect(self.x-50,self.y-50,self.health, 10))
