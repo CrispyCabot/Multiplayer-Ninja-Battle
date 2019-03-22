@@ -1,12 +1,13 @@
 import pygame
 from network import Network
+from random import randint
 from player import Player
 from config import SCREEN_HEIGHT, SCREEN_WIDTH, PATH
 from ledge import Platform, Wall
 import os
 import time
 
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
 pygame.display.set_caption("NINJA BATTLE")
 
 pygame.init()
@@ -81,17 +82,62 @@ def redrawWindow(win,player, player2, plats, walls):
             win.blit(text, pos)
     pygame.display.update()
 
+def getPlatforms():
+    x = randint(1,6)
+    if x == 1:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(100,SCREEN_HEIGHT-150,200,30, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-150,200,30, 'plat')
+                    ]
+    elif x == 2:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(100,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(1100,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(350,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(850,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(400,SCREEN_HEIGHT-650,600,30, 'plat')
+                    ]
+    elif x == 3:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(100,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(1100,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(350,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(850,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(400,SCREEN_HEIGHT-250,600,30, 'plat')
+                    ]
+    elif x == 4:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(200,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(1000,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(50,SCREEN_HEIGHT-250,500,30, 'plat'),
+                    Platform(850,SCREEN_HEIGHT-250,500,30, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-450,200,30, 'plat')
+                    ]
+    elif x == 5:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(200,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(1000,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-450,200,30, 'plat'),
+                    Platform(0,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(800,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(400,SCREEN_HEIGHT-250,200,30, 'plat'),
+                    Platform(1200,SCREEN_HEIGHT-250,200,30, 'plat')
+                    ]
+    elif x == 6:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                Platform(200,SCREEN_HEIGHT-250,200,30, 'plat'),
 
+                ]
+
+    return platforms
 def main():
     run = True
     n = Network()
     p = n.getP()
     clock = pygame.time.Clock()
 
-    platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'), 
-                Platform(100,SCREEN_HEIGHT-150,200,30, 'plat'),
-                Platform(600,SCREEN_HEIGHT-150,200,30, 'plat')
-                ]
+    platforms = getPlatforms()
 
     walls = [Wall(50,SCREEN_HEIGHT-200,20,100, 'wall1'),
             Wall(400,SCREEN_HEIGHT-600,20,200, 'wall2')]
