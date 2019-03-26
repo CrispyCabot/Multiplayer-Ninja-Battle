@@ -136,6 +136,7 @@ class Player:
         self.jumpVel = self.jumpMax
         self.jump = False
         self.canJump2 = True
+        self.doubleJumpDelay = 30
 
         self.reset = False
 
@@ -220,6 +221,7 @@ class Player:
             
         if self.alive:
             if self.jump:
+                self.doubleJumpDelay -= 1
                 if self.knockedDir == 'right':
                     self.x += self.knockXVel
                 if self.knockedDir == 'left':
@@ -246,10 +248,11 @@ class Player:
                     self.jumpVel = self.jumpMax
                     self.jump = False
                 '''
-            elif keys[K_UP] and self.canJump2:
+            elif keys[K_UP] and self.canJump2 and self.doubleJumpDelay <= 0:
                 self.jump = True
                 self.jumpVel = self.jumpMax
                 self.canJump2 = False
+                self.doubleJumpDelay = 50
                 self.action = 'run'
             if keys[K_RIGHT] and not keys[K_LEFT]:
                 self.x += playerSpeed
