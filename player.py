@@ -1,5 +1,6 @@
 import pygame
 import time
+from random import randint
 from pygame.locals import K_DOWN, K_UP, K_LEFT, K_RIGHT, K_SPACE, K_ESCAPE, \
                             MOUSEBUTTONUP, QUIT, K_r, K_t, K_RETURN
 import os
@@ -121,19 +122,28 @@ class Player:
         self.alive = True
         self.id = num
         self.health = 100
+        self.platLayout = randint(1,6)
         self.damagedEnemy = False
         self.lastY = self.y
         self.height = height
         self.width = width
-        self.health = 100
         self.frameCounter = 0
-        self.jumpMax = 30
-        self.jumpVel = self.jumpMax
         self.dir = 'right'
-        self.jump = False
         self.action = 'idle'
         self.lastAction = 'idle' #used to detect a change in action
+        
+        self.jumpMax = 30
+        self.jumpVel = self.jumpMax
+        self.jump = False
+        self.canJump2 = True
+
         self.reset = False
+
+        self.knocked = False
+        self.knockedVel = 8
+        self.knockedVelMax = 8
+        self.knockedDir = ''
+        self.knockXVel = 8
 
         self.chatActive = False
         self.msg = ''
@@ -163,16 +173,35 @@ class Player:
 
     def move(self, platforms, walls, enemy):
         keys = pygame.key.get_pressed()
+        if self.knocked:
+            if self.knockedDir == 'right':
+                self.x += self.knockXVel
+            else:
+                self.x -= self.knockXVel
+            self.y -= self.knockedVel
+            self.knockedVel -= 1
+            if self.knockedVel < -self.knockedVelMax:
+                self.knocked = False
+                self.knockedVel = self.knockedVelMax
+        if not enemy.platLayout == self.platLayout:
+            x = randint(0,5)
+            if x == 1:
+                self.platLayout = enemy.platLayout
         if enemy.reset and self.reset:
             self.resetVals()
+            self.platLayout = randint(1,6)
         if enemy.damagedEnemy:
             if self.alive:
                 self.health -= 5
-                if enemy.dir == 'right':
-                    self.x += 5
+                if not self.knocked:
+                    self.knocked = True
+                    if enemy.x < self.x:
+                        self.knockedDir = 'right'
+                    else:
+                        self.knockedDir = 'left'
+                    self.jump = True
                 else:
                     self.x -= 5
-                self.y -= 5
                 if self.health <= 0:
                     self.alive = False
         self.lastY = self.y
@@ -191,24 +220,37 @@ class Player:
             
         if self.alive:
             if self.jump:
+                if self.knockedDir == 'right':
+                    self.x += self.knockXVel
+                if self.knockedDir == 'left':
+                    self.x -= self.knockXVel
                 self.y -= self.jumpVel
                 self.jumpVel -= 2
                 if self.jumpVel < 0 and not keys[K_DOWN]:
                     for i in platforms:
                         check, val = i.hit(self.x, self.y+self.height/2-10, self.lastY)
                         if check:
-                            print('hit')
                             self.jump = False
+                            self.canJump2 = True
                             self.y = val-self.height/2
                             self.jumpVel = self.jumpMax
                             break
+            else:
+                self.knockedDir = ''
             if keys[K_UP] and not self.jump:
                 self.jump = True
-                self.y -= self.jumpVel
                 self.action = 'run' #the jump action is bad so yeah
+                '''
+                self.y -= self.jumpVel
                 if self.jumpVel <  -self.jumpMax:
                     self.jumpVel = self.jumpMax
                     self.jump = False
+                '''
+            elif keys[K_UP] and self.canJump2:
+                self.jump = True
+                self.jumpVel = self.jumpMax
+                self.canJump2 = False
+                self.action = 'run'
             if keys[K_RIGHT] and not keys[K_LEFT]:
                 self.x += playerSpeed
                 if self.x > SCREEN_WIDTH:
@@ -242,9 +284,9 @@ class Player:
             if keys[K_SPACE] and not self.chatActive:
                 self.action = 'slash'
                 #if p2 is in front
-                if 0 <  enemy.x - self.x < 50 and abs(enemy.y-self.y) < 50 and self.dir == 'right':
+                if 0 <  enemy.x - self.x < 75 and abs(enemy.y-self.y) < 50 and self.dir == 'right':
                     self.damagedEnemy = True
-                if 0 <  self.x - enemy.x < 50 and abs(enemy.y-self.y) < 50 and self.dir == 'left':
+                if 0 <  self.x - enemy.x < 75 and abs(enemy.y-self.y) < 50 and self.dir == 'left':
                     self.damagedEnemy = True
                 
             if keys[K_DOWN] and not self.jump and self.y < 600:

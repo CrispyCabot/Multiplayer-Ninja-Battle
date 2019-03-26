@@ -7,7 +7,7 @@ from ledge import Platform, Wall
 import os
 import time
 
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.FULLSCREEN)
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 pygame.display.set_caption("NINJA BATTLE")
 
 pygame.init()
@@ -82,14 +82,10 @@ def redrawWindow(win,player, player2, plats, walls):
             win.blit(text, pos)
     pygame.display.update()
 
-def getPlatforms():
-    x = randint(1,6)
+def getPlatforms(x):
     if x == 1:
-        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
-                    Platform(100,SCREEN_HEIGHT-150,200,30, 'plat'),
-                    Platform(600,SCREEN_HEIGHT-150,200,30, 'plat')
-                    ]
-    elif x == 2:
+        x = randint(2,6)
+    if x == 2:
         platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
                     Platform(100,SCREEN_HEIGHT-250,200,30, 'plat'),
                     Platform(600,SCREEN_HEIGHT-250,200,30, 'plat'),
@@ -137,7 +133,7 @@ def main():
     p = n.getP()
     clock = pygame.time.Clock()
 
-    platforms = getPlatforms()
+    platforms = getPlatforms(randint(1,6))
 
     walls = [Wall(50,SCREEN_HEIGHT-200,20,100, 'wall1'),
             Wall(400,SCREEN_HEIGHT-600,20,200, 'wall2')]
@@ -159,6 +155,7 @@ def main():
                             p.msg = p.msg + chr(event.key)
 
         p.move(platforms, walls, p2)
+        platforms = getPlatforms(p.platLayout)
         redrawWindow(win, p, p2, platforms, walls)
 
 main()

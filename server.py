@@ -23,8 +23,10 @@ print("Waiting for a connection, Server Started")
 global players
 players = [Player(0), Player(1)]
 
+currentPlayer = 0
+
 def threaded_client(conn, player):
-    global players
+    global players, currentPlayer
     conn.send(pickle.dumps(players[player]))
     reply = ""
     while True:
@@ -49,9 +51,9 @@ def threaded_client(conn, player):
             break
 
     print("Lost connection")
+    currentPlayer -= 1
     conn.close()
 
-currentPlayer = 0
 while True:
     conn, addr = s.accept()
     print("Connected to:", addr)
