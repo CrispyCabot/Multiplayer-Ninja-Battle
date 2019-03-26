@@ -118,7 +118,7 @@ class Player:
         else:
             self.x = SCREEN_WIDTH/2+200
             self.col = 'blue'
-        self.y = SCREEN_HEIGHT-100
+        self.y = SCREEN_HEIGHT-700
         self.alive = True
         self.id = num
         self.health = 100
