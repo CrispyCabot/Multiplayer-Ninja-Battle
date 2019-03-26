@@ -136,7 +136,8 @@ class Player:
         self.jumpVel = self.jumpMax
         self.jump = False
         self.canJump2 = True
-        self.doubleJumpDelay = 30
+        self.doubleJumpMax = 10
+        self.doubleJumpDelay = self.doubleJumpMax
 
         self.reset = False
 
@@ -177,8 +178,16 @@ class Player:
         if self.knocked:
             if self.knockedDir == 'right':
                 self.x += self.knockXVel
+                for i in walls:
+                    if i.hit(self.x+self.knockXVel, self.y):
+                        self.x -= self.knockXVel
+                        break
             else:
                 self.x -= self.knockXVel
+                for i in walls:
+                    if i.hit(self.x-self.knockXVel, self.y):
+                        self.x += self.knockXVel
+                        break
             self.y -= self.knockedVel
             self.knockedVel -= 1
             if self.knockedVel < -self.knockedVelMax:
@@ -223,6 +232,7 @@ class Player:
             if self.jump:
                 self.doubleJumpDelay -= 1
                 if self.knockedDir == 'right':
+                    
                     self.x += self.knockXVel
                 if self.knockedDir == 'left':
                     self.x -= self.knockXVel
@@ -238,26 +248,23 @@ class Player:
                             self.jumpVel = self.jumpMax
                             break
             else:
+                print('no jump')
                 self.knockedDir = ''
+                self.canJump2 = True
             if keys[K_UP] and not self.jump:
+                print('first jump')
                 self.jump = True
                 self.action = 'run' #the jump action is bad so yeah
-                '''
-                self.y -= self.jumpVel
-                if self.jumpVel <  -self.jumpMax:
-                    self.jumpVel = self.jumpMax
-                    self.jump = False
-                '''
+                self.doubleJumpDelay = self.doubleJumpMax
             elif keys[K_UP] and self.canJump2 and self.doubleJumpDelay <= 0:
+                print('double jump')
                 self.jump = True
                 self.jumpVel = self.jumpMax
                 self.canJump2 = False
-                self.doubleJumpDelay = 50
+                self.doubleJumpDelay = self.doubleJumpMax
                 self.action = 'run'
             if keys[K_RIGHT] and not keys[K_LEFT]:
                 self.x += playerSpeed
-                if self.x > SCREEN_WIDTH:
-                    self.x = SCREEN_WIDTH
                 self.action = 'run'
                 self.dir = 'right'
                 for i in platforms:
@@ -271,8 +278,6 @@ class Player:
                         break
             if keys[K_LEFT] and not keys[K_RIGHT]:
                 self.x -= playerSpeed
-                if self.x < 0:
-                    self.x = 0
                 self.action = 'run'
                 self.dir = 'left'
                 for i in platforms:

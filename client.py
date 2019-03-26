@@ -136,7 +136,7 @@ def main():
     platforms = getPlatforms(randint(1,6))
 
     walls = [Wall(50,SCREEN_HEIGHT-200,20,100, 'wall1'),
-            Wall(400,SCREEN_HEIGHT-600,20,200, 'wall2')]
+            Wall(400,SCREEN_HEIGHT-600,20,600, 'wall2')]
 
     while run:
         clock.tick(60)
