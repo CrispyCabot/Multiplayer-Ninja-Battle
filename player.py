@@ -142,10 +142,10 @@ class Player:
         self.reset = False
 
         self.knocked = False
-        self.knockedVel = 8
-        self.knockedVelMax = 8
+        self.knockedVelMax = 6
+        self.knockedVel = self.knockedVelMax
         self.knockedDir = ''
-        self.knockXVel = 8
+        self.knockXVel = 16
 
         self.chatActive = False
         self.msg = ''
@@ -176,18 +176,20 @@ class Player:
     def move(self, platforms, walls, enemy):
         keys = pygame.key.get_pressed()
         if self.knocked:
+            '''
             if self.knockedDir == 'right':
                 self.x += self.knockXVel
                 for i in walls:
-                    if i.hit(self.x+self.knockXVel, self.y):
+                    if i.hit(self.x, self.y):
                         self.x -= self.knockXVel
                         break
             else:
                 self.x -= self.knockXVel
                 for i in walls:
-                    if i.hit(self.x-self.knockXVel, self.y):
+                    if i.hit(self.x, self.y):
                         self.x += self.knockXVel
                         break
+            '''
             self.y -= self.knockedVel
             self.knockedVel -= 1
             if self.knockedVel < -self.knockedVelMax:
@@ -202,7 +204,7 @@ class Player:
             self.platLayout = randint(1,6)
         if enemy.damagedEnemy:
             if self.alive:
-                self.health -= 5
+                self.health -= 1
                 if not self.knocked:
                     self.knocked = True
                     if enemy.x < self.x:
@@ -210,8 +212,6 @@ class Player:
                     else:
                         self.knockedDir = 'left'
                     self.jump = True
-                else:
-                    self.x -= 5
                 if self.health <= 0:
                     self.alive = False
         self.lastY = self.y
@@ -231,11 +231,18 @@ class Player:
         if self.alive:
             if self.jump:
                 self.doubleJumpDelay -= 1
-                if self.knockedDir == 'right':
-                    
+                if self.knockedDir == 'right':    
                     self.x += self.knockXVel
+                    for i in walls:
+                        if i.hit(self.x, self.y):
+                            self.x -= self.knockXVel
+                            break
                 if self.knockedDir == 'left':
                     self.x -= self.knockXVel
+                    for i in walls:
+                        if i.hit(self.x, self.y):
+                            self.x += self.knockXVel
+                            break
                 self.y -= self.jumpVel
                 self.jumpVel -= 2
                 if self.jumpVel < 0 and not keys[K_DOWN]:
