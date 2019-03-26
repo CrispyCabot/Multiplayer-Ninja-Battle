@@ -176,27 +176,13 @@ class Player:
     def move(self, platforms, walls, enemy):
         keys = pygame.key.get_pressed()
         if self.knocked:
-            '''
-            if self.knockedDir == 'right':
-                self.x += self.knockXVel
-                for i in walls:
-                    if i.hit(self.x, self.y):
-                        self.x -= self.knockXVel
-                        break
-            else:
-                self.x -= self.knockXVel
-                for i in walls:
-                    if i.hit(self.x, self.y):
-                        self.x += self.knockXVel
-                        break
-            '''
             self.y -= self.knockedVel
             self.knockedVel -= 1
             if self.knockedVel < -self.knockedVelMax:
                 self.knocked = False
                 self.knockedVel = self.knockedVelMax
         if not enemy.platLayout == self.platLayout:
-            x = randint(0,5)
+            x = randint(0,10)
             if x == 1:
                 self.platLayout = enemy.platLayout
         if enemy.reset and self.reset:
@@ -255,18 +241,16 @@ class Player:
                             self.jumpVel = self.jumpMax
                             break
             else:
-                print('no jump')
                 self.knockedDir = ''
                 self.canJump2 = True
-            if keys[K_UP] and not self.jump:
-                print('first jump')
+            if keys[K_UP] and not self.jump: #Single jump
                 self.jump = True
                 self.action = 'run' #the jump action is bad so yeah
                 self.doubleJumpDelay = self.doubleJumpMax
-            elif keys[K_UP] and self.canJump2 and self.doubleJumpDelay <= 0:
-                print('double jump')
+            elif keys[K_UP] and self.canJump2 and self.doubleJumpDelay <= 0: #double jump
                 self.jump = True
                 self.jumpVel = self.jumpMax
+                self.knockedDir = ''
                 self.canJump2 = False
                 self.doubleJumpDelay = self.doubleJumpMax
                 self.action = 'run'
