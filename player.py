@@ -133,7 +133,7 @@ class Player:
         self.lastAction = 'idle' #used to detect a change in action
         
         self.jumpMax = 30
-        self.jumpVel = self.jumpMax
+        self.jumpVel = self.jumpMax 
         self.jump = False
         self.canJump2 = True
         self.doubleJumpMax = 10
@@ -188,7 +188,7 @@ class Player:
         if enemy.reset and self.reset:
             self.resetVals()
             self.platLayout = randint(1,6)
-        if enemy.damagedEnemy:
+        if enemy.damagedEnemy: 
             if self.alive:
                 self.health -= 1
                 if not self.knocked:
@@ -215,7 +215,7 @@ class Player:
             self.chatActive = True
             
         if self.alive:
-            if self.jump:
+            if self.jump: 
                 self.doubleJumpDelay -= 1
                 if self.knockedDir == 'right':    
                     self.x += self.knockXVel
