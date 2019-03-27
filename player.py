@@ -133,8 +133,8 @@ class Player:
         self.lastAction = 'idle' #used to detect a change in action
         
         self.jumpMax = 30
-        self.jumpVel = self.jumpMax 
-        self.jump = False
+        self.jumpVel = 0
+        self.jump = True
         self.canJump2 = True
         self.doubleJumpMax = 10
         self.doubleJumpDelay = self.doubleJumpMax
@@ -191,13 +191,12 @@ class Player:
         if enemy.damagedEnemy: 
             if self.alive:
                 self.health -= 1
-                if not self.knocked:
-                    self.knocked = True
-                    if enemy.x < self.x:
-                        self.knockedDir = 'right'
-                    else:
-                        self.knockedDir = 'left'
-                    self.jump = True
+                self.knocked = True
+                if enemy.x < self.x:
+                    self.knockedDir = 'right'
+                else:
+                    self.knockedDir = 'left'
+                self.jump = True
                 if self.health <= 0:
                     self.alive = False
         self.lastY = self.y
