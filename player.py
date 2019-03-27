@@ -145,7 +145,7 @@ class Player:
         self.knockedVelMax = 6
         self.knockedVel = self.knockedVelMax
         self.knockedDir = ''
-        self.knockXVel = 16
+        self.knockXVel = 10
 
         self.chatActive = False
         self.msg = ''
@@ -222,12 +222,14 @@ class Player:
                     for i in walls:
                         if i.hit(self.x, self.y):
                             self.x -= self.knockXVel
+                            self.knockedDir = 'left'
                             break
                 if self.knockedDir == 'left':
                     self.x -= self.knockXVel
                     for i in walls:
                         if i.hit(self.x, self.y):
                             self.x += self.knockXVel
+                            self.knockedDir = 'right'
                             break
                 self.y -= self.jumpVel
                 self.jumpVel -= 2

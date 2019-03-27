@@ -7,7 +7,7 @@ from ledge import Platform, Wall
 import os
 import time
 
-win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+win = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT), pygame.RESIZABLE)
 pygame.display.set_caption("NINJA BATTLE")
 
 pygame.init()
