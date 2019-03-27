@@ -83,9 +83,14 @@ def redrawWindow(win,player, player2, plats, walls):
     pygame.display.update()
 
 def getPlatforms(x):
+    platforms = []
+    walls = []
     if x == 1:
-        x = randint(2,6)
-    if x == 2:
+        platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
+                    Platform(100,SCREEN_HEIGHT-150,200,30, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-150,200,30, 'plat')
+                    ]
+    elif x == 2:
         platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
                     Platform(100,SCREEN_HEIGHT-250,200,30, 'plat'),
                     Platform(600,SCREEN_HEIGHT-250,200,30, 'plat'),
@@ -102,6 +107,7 @@ def getPlatforms(x):
                     Platform(850,SCREEN_HEIGHT-450,200,30, 'plat'),
                     Platform(400,SCREEN_HEIGHT-250,600,30, 'plat')
                     ]
+    
     elif x == 4:
         platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
                     Platform(200,SCREEN_HEIGHT-450,200,30, 'plat'),
@@ -122,24 +128,82 @@ def getPlatforms(x):
                     ]
     elif x == 6:
         platforms = [Platform(-50,SCREEN_HEIGHT-50, SCREEN_WIDTH+100, 100, 'floor'),
-                Platform(200,SCREEN_HEIGHT-250,200,30, 'plat'),
-
+                    Platform(150,SCREEN_HEIGHT-200,250,20, 'plat'),
+                    Platform(900,SCREEN_HEIGHT-200,250,20, 'plat'),
+                    Platform(650,SCREEN_HEIGHT-300,80,20, 'plat'),
+                    Platform(150,SCREEN_HEIGHT-400,480,20, 'plat'),
+                    Platform(0,SCREEN_HEIGHT-380,150,20, 'plat'),
+                    Platform(1150,SCREEN_HEIGHT-300,250,20, 'plat'),
+                    Platform(1150,SCREEN_HEIGHT-550,250,20, 'plat'),
+                    Platform(600,SCREEN_HEIGHT-550,450,20, 'plat'),
+                    Platform(1130,SCREEN_HEIGHT-600,20,20, 'plat'),
+                    Platform(-50,SCREEN_HEIGHT-25, SCREEN_WIDTH+100, 100, 'floor'),
+                    ]
+        walls = [Wall(150,SCREEN_HEIGHT-400,20,200, 'wall1'),
+                Wall(1130,SCREEN_HEIGHT-600,20,400, 'wall2'),
+                Wall(550,SCREEN_HEIGHT-400,20,200, 'wall1'),
+                Wall(730,SCREEN_HEIGHT-550,20,350, 'wall2')
+                ]
+    elif x == 7:
+        platforms = [
+                    Platform(0,SCREEN_HEIGHT-300,450,20, 'plat'),
+                    Platform(915,SCREEN_HEIGHT-300,450,20, 'plat'),
+                    Platform(550,SCREEN_HEIGHT-200,250,20, 'plat'),
+                    Platform(620,SCREEN_HEIGHT-530,120,20, 'plat'),
+                    Platform(200,SCREEN_HEIGHT-630,250,20, 'plat'),
+                    Platform(950,SCREEN_HEIGHT-630,250,20, 'plat'),
+                    Platform(670,SCREEN_HEIGHT-600,20,20, 'plat'),
+                    ]
+        walls = [Wall(670,SCREEN_HEIGHT-600,20,200, 'wall1'),
+                Wall(915,SCREEN_HEIGHT-300,20,400, 'wall2'),
+                Wall(440,SCREEN_HEIGHT-300,20,400, 'wall1'),
+                ]
+    elif x == 8:
+        platforms = [
+                    Platform(600,SCREEN_HEIGHT-100,200,20, 'plat'),
+                    Platform(300,SCREEN_HEIGHT-150,200,20, 'plat'),
+                    Platform(0,SCREEN_HEIGHT-200,200,20, 'plat'),
+                    Platform(900,SCREEN_HEIGHT-150,200,20, 'plat'),
+                    Platform(1200,SCREEN_HEIGHT-200,200,20, 'plat'),
+                    Platform(550,SCREEN_HEIGHT-400,300,20, 'plat'),
+                    Platform(350,SCREEN_HEIGHT-450,100,20, 'plat'),
+                    Platform(100,SCREEN_HEIGHT-500,200,20, 'plat'),
+                    Platform(950,SCREEN_HEIGHT-450,100,20, 'plat'),
+                    Platform(1100,SCREEN_HEIGHT-500,200,20, 'plat'),
+                    ]
+        walls = [
+                ]
+    elif x == 9:
+        platforms = [
+                Platform(400,SCREEN_HEIGHT-200,550,20, 'plat'),
+                Platform(400,SCREEN_HEIGHT-400,200,20, 'plat'),
+                Platform(770,SCREEN_HEIGHT-400,200,20, 'plat'),
+                Platform(580,SCREEN_HEIGHT-600,20,20, 'plat'),
+                Platform(770,SCREEN_HEIGHT-600,20,20, 'plat'),
+                Platform(100,SCREEN_HEIGHT-300,200,20, 'plat'),
+                Platform(1100,SCREEN_HEIGHT-300,200,20, 'plat'),
                 ]
 
-    return platforms
+        walls = [
+            Wall(400,SCREEN_HEIGHT-400,20,400, 'wall1'),
+            Wall(950,SCREEN_HEIGHT-400,20,400, 'wall2'),
+            Wall(580,SCREEN_HEIGHT-600,20,200, 'wall1'),
+            Wall(770,SCREEN_HEIGHT-600,20,200, 'wall2'),
+                ]
+    
+    return platforms, walls
 def main():
     run = True
     n = Network()
     p = n.getP()
     clock = pygame.time.Clock()
 
-    platforms = getPlatforms(randint(1,6))
-
-    walls = [Wall(50,SCREEN_HEIGHT-200,20,100, 'wall1'),
-            Wall(400,SCREEN_HEIGHT-600,20,600, 'wall2')]
+    platforms, walls = getPlatforms(randint(1,6))
+    counter = 0
 
     while run:
-        clock.tick(60)
+        clock.tick(80)
+        counter += 1
         p2 = n.send(p)
 
         for event in pygame.event.get():
@@ -155,7 +219,8 @@ def main():
                             p.msg = p.msg + chr(event.key)
 
         p.move(platforms, walls, p2)
-        platforms = getPlatforms(p.platLayout)
+        if counter < 200:
+            platforms, walls = getPlatforms(p.platLayout)
         redrawWindow(win, p, p2, platforms, walls)
 
 main()

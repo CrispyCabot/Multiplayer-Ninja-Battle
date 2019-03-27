@@ -122,7 +122,7 @@ class Player:
         self.alive = True
         self.id = num
         self.health = 100
-        self.platLayout = randint(1,6)
+        self.platLayout = randint(1,9)
         self.damagedEnemy = False
         self.lastY = self.y
         self.height = height
